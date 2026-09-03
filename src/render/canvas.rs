@@ -31,7 +31,7 @@ use crate::interaction::selection::get_nodes_inside;
 use crate::render::background::render_background;
 use crate::render::connection_renderer::render_connection_line;
 use crate::render::edge_renderer::{
-    render_edge_contact_indicators, render_edge_markers, render_edges, EdgeEndpoints,
+    EdgeEndpoints, render_edge_contact_indicators, render_edge_markers, render_edges,
 };
 use crate::render::handle_renderer::render_handles;
 use crate::render::minimap::render_minimap;
@@ -44,6 +44,7 @@ use crate::types::edge::{Edge, EdgeId, EdgePosition};
 use crate::types::handle::Handle;
 use crate::types::node::NodeId;
 use crate::types::position::Transform;
+use crate::{EdgeType, edges};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public traits
@@ -62,7 +63,8 @@ pub trait ConnectionValidator {
     /// Return `true` to accept the prospective `connection`, `false` to
     /// reject it. `existing_edges` is a type-erased snapshot of every edge
     /// currently in the graph, suitable for topology-aware checks.
-    fn is_valid_connection(&self, connection: &Connection, existing_edges: &[EdgeInfo<'_>]) -> bool;
+    fn is_valid_connection(&self, connection: &Connection, existing_edges: &[EdgeInfo<'_>])
+    -> bool;
 }
 
 /// A [`ConnectionValidator`] that permits every connection.
@@ -267,8 +269,7 @@ where
             primary_pressed,
             &mut events,
         );
-        let edge_clicked_this_frame =
-            edge_clicked_this_frame || !events.edges_clicked.is_empty();
+        let edge_clicked_this_frame = edge_clicked_this_frame || !events.edges_clicked.is_empty();
         if !edge_changes.is_empty() {
             self.state.apply_edge_changes(&edge_changes);
         }
@@ -333,9 +334,11 @@ where
         let resize_handle_rects: Vec<egui::Rect> = {
             use crate::interaction::resize::HANDLE_SIZE as RH_SIZE;
             if let Some(rid) = should_show_resize_handles(&self.state.node_lookup) {
-                if let Some(rnode) = self.state.node_lookup.get(&rid)
-                    .filter(|n| n.node.resizable.unwrap_or(self.state.config.nodes_resizable))
-                {
+                if let Some(rnode) = self.state.node_lookup.get(&rid).filter(|n| {
+                    n.node
+                        .resizable
+                        .unwrap_or(self.state.config.nodes_resizable)
+                }) {
                     let origin = self.state.config.node_origin;
                     let raw = flow_to_screen(rnode.internals.position_absolute, &transform);
                     let nw = rnode.width() * transform.scale;
@@ -347,14 +350,9 @@ where
                         .iter()
                         .map(|kind| {
                             let (ax, ay) = kind.anchor();
-                            let center = egui::pos2(
-                                nr.min.x + nr.width() * ax,
-                                nr.min.y + nr.height() * ay,
-                            );
-                            egui::Rect::from_center_size(
-                                center,
-                                egui::vec2(RH_SIZE, RH_SIZE),
-                            )
+                            let center =
+                                egui::pos2(nr.min.x + nr.width() * ax, nr.min.y + nr.height() * ay);
+                            egui::Rect::from_center_size(center, egui::vec2(RH_SIZE, RH_SIZE))
                         })
                         .collect()
                 } else {
@@ -479,7 +477,11 @@ where
                 }
             }
 
-            if can_drag && node_resp.drag_stopped() && !resize_in_progress && !pointer_on_resize_handle {
+            if can_drag
+                && node_resp.drag_stopped()
+                && !resize_in_progress
+                && !pointer_on_resize_handle
+            {
                 active_drag_ended = true;
             }
 
@@ -548,9 +550,11 @@ where
         let is_connecting_now = !matches!(self.state.connection_state, ConnectionState::None);
         if !is_connecting_now {
             if let Some(resize_node_id) = should_show_resize_handles(&self.state.node_lookup) {
-                if let Some(node) = self.state.node_lookup.get(&resize_node_id)
-                    .filter(|n| n.node.resizable.unwrap_or(self.state.config.nodes_resizable))
-                {
+                if let Some(node) = self.state.node_lookup.get(&resize_node_id).filter(|n| {
+                    n.node
+                        .resizable
+                        .unwrap_or(self.state.config.nodes_resizable)
+                }) {
                     let origin = self.state.config.node_origin;
                     let raw_origin = flow_to_screen(node.internals.position_absolute, &transform);
                     let nw = node.width() * transform.scale;
@@ -705,12 +709,7 @@ where
         render_edge_markers(&painter, &edge_endpoints);
 
         // ── Edge contact indicators (rendered on top of nodes) ───────────────
-        render_edge_contact_indicators(
-            &painter,
-            &edge_endpoints,
-            &transform,
-            &self.state.config,
-        );
+        render_edge_contact_indicators(&painter, &edge_endpoints, &transform, &self.state.config);
 
         // ── Connection state machine ─────────────────────────────────────────
         // Start a new connection drag
@@ -1085,12 +1084,6 @@ fn find_edge_under_pointer<ND, ED>(
     config: &FlowConfig,
     pointer: egui::Pos2,
 ) -> Option<EdgeId> {
-    use crate::edges::bezier::{get_bezier_path, sample_bezier};
-    use crate::edges::positions::get_edge_position;
-    use crate::edges::smooth_step::{get_smooth_step_path, get_step_path};
-    use crate::edges::straight::get_straight_path;
-    use crate::types::edge::EdgeType;
-
     let mut hit: Option<EdgeId> = None;
     let mut best_dist = f32::INFINITY;
 
@@ -1102,7 +1095,7 @@ fn find_edge_under_pointer<ND, ED>(
             continue;
         }
 
-        let ep = match get_edge_position(
+        let ep = match edges::positions::get_edge_position(
             &edge.source,
             &edge.target,
             edge.source_handle.as_deref(),
@@ -1119,39 +1112,22 @@ fn find_edge_under_pointer<ND, ED>(
 
         let edge_type = edge.edge_type.unwrap_or(config.default_edge_type);
         let hit_width = edge.interaction_width * transform.scale;
+        let edge_path_result = edges::get_edge_path_result(&ep, edge_type);
 
-        let screen_points: Vec<egui::Pos2> = match edge_type {
-            EdgeType::Bezier | EdgeType::SimpleBezier => {
-                let result = get_bezier_path(&ep, None);
-                if result.points.len() == 4 {
-                    let p0 = flow_to_screen(result.points[0], transform);
-                    let p1 = flow_to_screen(result.points[1], transform);
-                    let p2 = flow_to_screen(result.points[2], transform);
-                    let p3 = flow_to_screen(result.points[3], transform);
-                    sample_bezier(p0, p1, p2, p3, 32)
-                } else {
+        // Check if bezier
+        let screen_points = {
+            if edge_type == EdgeType::Bezier || edge_type == EdgeType::SimpleBezier {
+                if edge_path_result.points.len() != 4 {
                     continue;
                 }
-            }
-            EdgeType::Straight => {
-                let result = get_straight_path(&ep);
-                result
-                    .points
-                    .iter()
-                    .map(|p| flow_to_screen(*p, transform))
-                    .collect()
-            }
-            EdgeType::SmoothStep => {
-                let result = get_smooth_step_path(&ep, None, None);
-                result
-                    .points
-                    .iter()
-                    .map(|p| flow_to_screen(*p, transform))
-                    .collect()
-            }
-            EdgeType::Step => {
-                let result = get_step_path(&ep, None);
-                result
+
+                let p0 = flow_to_screen(edge_path_result.points[0], transform);
+                let p1 = flow_to_screen(edge_path_result.points[1], transform);
+                let p2 = flow_to_screen(edge_path_result.points[2], transform);
+                let p3 = flow_to_screen(edge_path_result.points[3], transform);
+                edges::bezier::sample_bezier(p0, p1, p2, p3, 32)
+            } else {
+                edge_path_result
                     .points
                     .iter()
                     .map(|p| flow_to_screen(*p, transform))
@@ -1226,7 +1202,10 @@ fn process_edge_clicks<ND, ED>(
             } else {
                 e.selected
             };
-            EdgeChange::Select { id: e.id.clone(), selected: select }
+            EdgeChange::Select {
+                id: e.id.clone(),
+                selected: select,
+            }
         })
         .collect()
 }
@@ -1434,7 +1413,13 @@ fn process_selection<ND, ED>(
 
     // If pointer is over a node / dragging a node / connecting / resizing /
     // edge was clicked / anchor drag active, don't do selection
-    if over_node || node_dragging || is_connecting || resize_active || edge_clicked || anchor_drag_active {
+    if over_node
+        || node_dragging
+        || is_connecting
+        || resize_active
+        || edge_clicked
+        || anchor_drag_active
+    {
         new_mem.selection_start = None;
         return (None, new_mem, node_changes, edge_changes);
     }
@@ -1690,11 +1675,7 @@ fn handle_anchor_drag<ND, ED>(
                     source_anchor: sa,
                     target_anchor: ta,
                 });
-                events.push_anchor_changed(
-                    drag.edge_id,
-                    sa.and_then(|v| v),
-                    ta.and_then(|v| v),
-                );
+                events.push_anchor_changed(drag.edge_id, sa.and_then(|v| v), ta.and_then(|v| v));
             }
         }
     }

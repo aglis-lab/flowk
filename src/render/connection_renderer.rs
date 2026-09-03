@@ -95,6 +95,14 @@ pub(crate) fn render_connection_line(
                 draw_polyline(painter, &result.points, stroke);
             }
         }
+        EdgeType::Elbow => {
+            let result = get_smooth_step_path(&edge_pos, None, None);
+            if config.connection_line_animated {
+                draw_animated_line(painter, &result.points, stroke, config, time);
+            } else {
+                draw_polyline(painter, &result.points, stroke);
+            }
+        }
     }
 
     // Draw a small circle at the origin handle

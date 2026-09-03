@@ -57,7 +57,10 @@ pub struct EdgeAnchor {
 impl EdgeAnchor {
     /// Create a new anchor on the given side at normalized position `t`.
     pub fn new(side: Position, t: f32) -> Self {
-        Self { side, t: t.clamp(0.0, 1.0) }
+        Self {
+            side,
+            t: t.clamp(0.0, 1.0),
+        }
     }
 
     /// Convert this anchor into an absolute flow-space point given the node rect.
@@ -134,12 +137,15 @@ pub enum EdgeType {
     /// A cubic bezier curve (default).
     #[default]
     Bezier,
-    /// An orthogonal path with rounded corners.
-    SmoothStep,
     /// A simplified bezier with fewer control points.
     SimpleBezier,
+    /// An orthogonal path with rounded corners.
+    SmoothStep,
     /// An orthogonal path with sharp 90-degree corners.
     Step,
+    /// An orthogonal path that bends once at the midpoint between nodes,
+    /// as used by Figma's connector/prototyping links.
+    Elbow,
 }
 
 /// The shape of an arrow marker at an edge endpoint.
@@ -237,7 +243,11 @@ fn default_interaction_width() -> f32 {
 
 impl<D> Edge<D> {
     /// Create a new edge connecting two nodes.
-    pub fn new(id: impl Into<Arc<str>>, source: impl Into<Arc<str>>, target: impl Into<Arc<str>>) -> Self {
+    pub fn new(
+        id: impl Into<Arc<str>>,
+        source: impl Into<Arc<str>>,
+        target: impl Into<Arc<str>>,
+    ) -> Self {
         Self {
             id: EdgeId::new(id),
             source: NodeId::new(source),
@@ -328,13 +338,17 @@ impl<D> Edge<D> {
 
     /// Set the edge colour when selected.
     pub fn selected_color(mut self, color: egui::Color32) -> Self {
-        self.style.get_or_insert_with(EdgeStyle::default).selected_color = Some(color);
+        self.style
+            .get_or_insert_with(EdgeStyle::default)
+            .selected_color = Some(color);
         self
     }
 
     /// Set the edge stroke width.
     pub fn stroke_width(mut self, width: f32) -> Self {
-        self.style.get_or_insert_with(EdgeStyle::default).stroke_width = Some(width);
+        self.style
+            .get_or_insert_with(EdgeStyle::default)
+            .stroke_width = Some(width);
         self
     }
 

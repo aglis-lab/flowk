@@ -46,15 +46,15 @@ pub enum ResizeHandleKind {
 
 impl ResizeHandleKind {
     /// All eight handles in clockwise order starting at the top-left corner.
-    pub const ALL: [ResizeHandleKind; 8] = [
+    pub const ALL: [ResizeHandleKind; 4] = [
         ResizeHandleKind::TopLeft,
-        ResizeHandleKind::Top,
+        // ResizeHandleKind::Top,
         ResizeHandleKind::TopRight,
-        ResizeHandleKind::Right,
+        // ResizeHandleKind::Right,
         ResizeHandleKind::BottomRight,
-        ResizeHandleKind::Bottom,
+        // ResizeHandleKind::Bottom,
         ResizeHandleKind::BottomLeft,
-        ResizeHandleKind::Left,
+        // ResizeHandleKind::Left,
     ];
 
     /// Normalised (0..=1, 0..=1) anchor point within the node for this handle.

@@ -125,6 +125,12 @@ fn build_path_cache_entry<ND, ED>(
             pts.extend(result.points.iter().copied());
             (pts, result.label_pos)
         }
+        EdgeType::Elbow => {
+            let result = crate::edges::elbow::get_elbow_path(&edge_pos, None);
+            let mut pts: SmallVec<[egui::Pos2; 16]> = SmallVec::with_capacity(result.points.len());
+            pts.extend(result.points.iter().copied());
+            (pts, result.label_pos)
+        }
     };
 
     Some(EdgePathCache {
@@ -174,11 +180,15 @@ fn render_single_edge<ND, ED>(
 
     let style = edge.style.as_ref();
     let color = if edge.selected {
-        style.and_then(|s| s.selected_color).unwrap_or(config.edge_selected_color)
+        style
+            .and_then(|s| s.selected_color)
+            .unwrap_or(config.edge_selected_color)
     } else {
         style.and_then(|s| s.color).unwrap_or(config.edge_color)
     };
-    let base_width = style.and_then(|s| s.stroke_width).unwrap_or(config.edge_stroke_width);
+    let base_width = style
+        .and_then(|s| s.stroke_width)
+        .unwrap_or(config.edge_stroke_width);
     let width = base_width * if edge.selected { 2.0 } else { 1.0 };
     let stroke = egui::Stroke::new(width, color);
     let glow = style.and_then(|s| s.glow);
@@ -214,11 +224,7 @@ fn render_single_edge<ND, ED>(
         if !label.is_empty() {
             let center = flow_to_screen(cache.label_pos, transform);
             let font = egui::FontId::proportional(config.edge_label_font_size * transform.scale);
-            let galley = painter.layout_no_wrap(
-                label.to_owned(),
-                font,
-                config.edge_label_color,
-            );
+            let galley = painter.layout_no_wrap(label.to_owned(), font, config.edge_label_color);
             let pad = config.edge_label_padding * transform.scale;
             let text_size = galley.size();
             let rect = egui::Rect::from_center_size(
@@ -359,4 +365,3 @@ fn draw_animated_line(
         }
     }
 }
-
