@@ -152,6 +152,8 @@ pub struct FlowConfig {
     pub node_border_color: egui::Color32,
     /// Node border colour when selected.
     pub node_selected_border_color: egui::Color32,
+    /// Node border colour when hovered.
+    pub node_hover_border_color: egui::Color32,
     /// Node border stroke width.
     pub node_border_width: f32,
     /// Node corner rounding radius.
@@ -233,7 +235,12 @@ impl FlowConfig {
     /// ```
     pub fn corner_radius(&self) -> egui::CornerRadius {
         let r = self.node_corner_radius.round().clamp(0.0, 255.0) as u8;
-        egui::CornerRadius { nw: r, ne: r, sw: r, se: r }
+        egui::CornerRadius {
+            nw: r,
+            ne: r,
+            sw: r,
+            se: r,
+        }
     }
 
     /// Read-only data-visualisation preset.
@@ -304,14 +311,15 @@ impl Default for FlowConfig {
             handle_color: egui::Color32::from_rgb(177, 177, 183),
             handle_hover_color: egui::Color32::from_rgb(59, 130, 246),
             handle_connected_color: egui::Color32::from_rgb(59, 130, 246),
-            default_node_width: 150.0,
-            default_node_height: 40.0,
+            default_node_width: 180.0,
+            default_node_height: 320.0,
             node_bg_color: egui::Color32::WHITE,
             node_selected_bg_color: egui::Color32::WHITE,
             node_border_color: egui::Color32::from_rgb(177, 177, 183),
             node_selected_border_color: egui::Color32::from_rgb(59, 130, 246),
+            node_hover_border_color: egui::Color32::from_rgb(100, 170, 255),
             node_border_width: 1.0,
-            node_corner_radius: 5.0,
+            node_corner_radius: 6.0,
             node_bg_opacity: 1.0,
             node_text_color: egui::Color32::from_rgb(50, 50, 50),
             default_source_position: Position::Right,

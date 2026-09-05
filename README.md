@@ -1,9 +1,9 @@
-# egui_xyflow
+# flowk
 
 A node graph editor for [egui](https://github.com/emilk/egui). Build interactive flow charts, diagrams, pipelines, and visualizations — inspired by [xyflow](https://xyflow.com/) (React Flow).
 
-[![Crates.io](https://img.shields.io/crates/v/egui_xyflow.svg)](https://crates.io/crates/egui_xyflow)
-[![docs.rs](https://docs.rs/egui_xyflow/badge.svg)](https://docs.rs/egui_xyflow)
+[![Crates.io](https://img.shields.io/crates/v/flowk.svg)](https://crates.io/crates/flowk)
+[![docs.rs](https://docs.rs/flowk/badge.svg)](https://docs.rs/flowk)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 <table>
@@ -71,7 +71,7 @@ A node graph editor for [egui](https://github.com/emilk/egui). Build interactive
 - **Animated viewport transitions** with easing functions
 - **Viewport edge culling** — off-screen edges skip path compute (toggle via `FlowConfig::cull_offscreen_edges`)
 - **Cached edge geometry** — flow-space polylines are cached per edge and only rebuilt when an endpoint node moves/resizes or the edge itself is mutated, so pan and zoom on a static graph skip path sampling entirely
-- **Force-directed layout** — built-in `egui_xyflow::physics` module with Barnes–Hut charge, link, position, collision, and center forces (D3-compatible defaults)
+- **Force-directed layout** — built-in `flowk::physics` module with Barnes–Hut charge, link, position, collision, and center forces (D3-compatible defaults)
 - **Serde support** — save and load graph state (enabled by default)
 - **Fully customizable** — 60+ options in `FlowConfig`, plus traits for custom node/edge rendering
 
@@ -81,7 +81,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-egui_xyflow = "0.4"
+flowk = "0.4"
 eframe = "0.31"
 ```
 
@@ -91,7 +91,7 @@ This creates two connected nodes:
 
 ```rust,no_run
 use eframe::egui;
-use egui_xyflow::prelude::*;
+use flowk::prelude::*;
 
 struct MyApp {
     state: FlowState<String, ()>,
@@ -271,7 +271,7 @@ if events.viewport_changed {
 Modify graph state through the change system:
 
 ```rust,ignore
-use egui_xyflow::prelude::*;
+use flowk::prelude::*;
 
 // Move a node
 state.apply_node_changes(vec![
@@ -376,6 +376,7 @@ impl NodeWidget<MyData> for MyRenderer {
 ```
 
 **Built-in renderers:**
+
 - `DefaultNodeWidget` — renders `Node<String>` with label text
 - `UnitNodeWidget` — renders `Node<()>` as plain boxes
 
@@ -434,12 +435,12 @@ FlowCanvas::new(&mut state, &node_widget)
 
 ## Physics (Force-Directed Layout)
 
-The `egui_xyflow::physics` module provides a D3-compatible force simulation
+The `flowk::physics` module provides a D3-compatible force simulation
 for laying out graphs automatically. Charge uses a Barnes–Hut quadtree
 (θ = 0.9 by default) so it stays cheap for large graphs.
 
 ```rust,ignore
-use egui_xyflow::physics::*;
+use flowk::physics::*;
 
 // Build a simulation from your FlowState.
 let mut sim = ForceSimulation::from_state(&state)
@@ -457,20 +458,20 @@ if !sim.step(&mut state) {
 
 Built-in forces:
 
-| Force | Purpose | D3 analogue |
-|-------|---------|-------------|
-| `ManyBodyForce` | Pairwise repulsion/attraction (Barnes–Hut) | `forceManyBody` |
-| `LinkForce` | Spring between connected node pairs | `forceLink` |
-| `PositionForce` | Pull toward a target point | `forceX` / `forceY` |
-| `CollisionForce` | Prevent overlap based on `SimNode.radius` | `forceCollide` |
-| `CenterForce` | Rigidly recenter the graph centroid | `forceCenter` |
+| Force            | Purpose                                    | D3 analogue         |
+| ---------------- | ------------------------------------------ | ------------------- |
+| `ManyBodyForce`  | Pairwise repulsion/attraction (Barnes–Hut) | `forceManyBody`     |
+| `LinkForce`      | Spring between connected node pairs        | `forceLink`         |
+| `PositionForce`  | Pull toward a target point                 | `forceX` / `forceY` |
+| `CollisionForce` | Prevent overlap based on `SimNode.radius`  | `forceCollide`      |
+| `CenterForce`    | Rigidly recenter the graph centroid        | `forceCenter`       |
 
 Or implement the `Force` trait for custom behaviour. Per-node overrides
 (`radius`, `strength`) can be set on `SimNode` directly, or derived from
 your node data via `ForceSimulation::from_state_with(&state, opts)`.
 
 The module is **not** in the crate prelude — import it explicitly:
-`use egui_xyflow::physics::*;`.
+`use flowk::physics::*;`.
 
 See `examples/disjoint_force_graph.rs` for a full citation-network
 layout and `examples/physics_bench.rs` for a timing harness.
@@ -509,15 +510,15 @@ config.edge_color = egui::Color32::from_rgb(100, 100, 140);
 let state = FlowState::new(config);
 ```
 
-See the [docs](https://docs.rs/egui_xyflow) for the full list of options.
+See the [docs](https://docs.rs/flowk) for the full list of options.
 
 ## Examples
 
 Clone the repo and run any of the 17 included examples:
 
 ```bash
-git clone https://github.com/avinkrisv/egui_xyflow
-cd egui_xyflow
+git clone https://github.com/avinkrisv/flowk
+cd flowk
 
 cargo run --example basic_flow                  # getting started
 cargo run --example edge_labels                 # edge labels + viewport culling
@@ -540,12 +541,12 @@ cargo run --release --example physics_bench     # physics timing harness
 
 ## Compatibility
 
-| egui_xyflow | egui |
-|-------------|------|
-| 0.4         | 0.31 |
-| 0.3         | 0.31 |
-| 0.2         | 0.31 |
-| 0.1         | 0.31 |
+| flowk | egui |
+| ----- | ---- |
+| 0.4   | 0.31 |
+| 0.3   | 0.31 |
+| 0.2   | 0.31 |
+| 0.1   | 0.31 |
 
 ## License
 

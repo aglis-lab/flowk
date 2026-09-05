@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**egui_xyflow** is a Rust library providing an interactive node graph editor widget for [egui](https://github.com/emilk/egui), inspired by [xyflow](https://xyflow.com/) (React Flow). It supports node dragging, edge connections, pan/zoom, selection, minimap, and animated edges.
+**flowk** is a Rust library providing an interactive node graph editor widget for [egui](https://github.com/emilk/egui), inspired by [xyflow](https://xyflow.com/) (React Flow). It supports node dragging, edge connections, pan/zoom, selection, minimap, and animated edges.
 
 ## Build & Run Commands
 
@@ -20,6 +20,7 @@ cargo doc --open                   # Generate and open documentation
 ### Generic Parameters
 
 The library is parameterized over two types used throughout:
+
 - `ND` — custom user data attached to nodes (defaults to `()`)
 - `ED` — custom user data attached to edges (defaults to `()`)
 
@@ -56,6 +57,7 @@ Background → Edges → Connection drag line → Nodes (z-ordered) → Handles 
 ### Coordinate System
 
 Two coordinate spaces with conversions in `graph/node_position.rs`:
+
 - **Screen space** — UI pixel coordinates
 - **Flow space** — graph coordinates, transformed by `Transform { x, y, scale }`
 

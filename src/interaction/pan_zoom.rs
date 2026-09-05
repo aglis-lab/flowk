@@ -43,7 +43,7 @@ pub(crate) fn handle_pan_zoom(
 
     // ── Scroll wheel → zoom ──────────────────────────────────────────────────
     if config.zoom_on_scroll && response.hovered() {
-        let scroll = ui.input(|i| i.raw_scroll_delta.y);
+        let scroll = ui.input(|i| i.smooth_scroll_delta.y);
         if scroll != 0.0 {
             // Map raw pixel delta → zoom factor.
             // Raw scroll on most platforms is in pixels; 120 px ≈ one notch.
@@ -54,7 +54,10 @@ pub(crate) fn handle_pan_zoom(
             if smooth {
                 let base = zoom_target.map(|t| t.zoom).unwrap_or(viewport.zoom);
                 let new_target = (base * factor).clamp(config.min_zoom, config.max_zoom);
-                zoom_target = Some(ZoomTarget { pointer, zoom: new_target });
+                zoom_target = Some(ZoomTarget {
+                    pointer,
+                    zoom: new_target,
+                });
             } else {
                 zoom_toward(viewport, pointer, factor, config.min_zoom, config.max_zoom);
                 clamp_translate(viewport, &config.translate_extent, canvas_rect);
@@ -73,7 +76,10 @@ pub(crate) fn handle_pan_zoom(
             if smooth {
                 let base = zoom_target.map(|t| t.zoom).unwrap_or(viewport.zoom);
                 let new_target = (base * zoom_delta).clamp(config.min_zoom, config.max_zoom);
-                zoom_target = Some(ZoomTarget { pointer, zoom: new_target });
+                zoom_target = Some(ZoomTarget {
+                    pointer,
+                    zoom: new_target,
+                });
             } else {
                 zoom_toward(
                     viewport,
@@ -122,7 +128,7 @@ pub(crate) fn handle_pan_zoom(
 
     // ── Scroll → pan (pan_on_scroll mode, mutually exclusive with zoom) ──────
     if config.pan_on_scroll && response.hovered() {
-        let scroll = ui.input(|i| i.raw_scroll_delta);
+        let scroll = ui.input(|i| i.smooth_scroll_delta);
         if scroll != egui::Vec2::ZERO {
             use crate::types::viewport::PanOnScrollMode;
             match config.pan_on_scroll_mode {
@@ -185,11 +191,7 @@ pub(crate) fn tick_zoom_smoothing(
     }
     clamp_translate(viewport, &config.translate_extent, canvas_rect);
 
-    if snap {
-        None
-    } else {
-        Some(target)
-    }
+    if snap { None } else { Some(target) }
 }
 
 /// Zoom the viewport toward a screen-space point by `factor`.

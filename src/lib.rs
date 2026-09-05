@@ -1,4 +1,4 @@
-//! # egui_xyflow
+//! # flowk
 //!
 //! An interactive node-graph editor widget for
 //! [egui](https://github.com/emilk/egui), inspired by
@@ -11,7 +11,7 @@
 //!
 //! ```rust,no_run
 //! use eframe::egui;
-//! use egui_xyflow::prelude::*;
+//! use flowk::prelude::*;
 //!
 //! struct MyApp {
 //!     state: FlowState<String, ()>,
@@ -116,8 +116,8 @@
 //! usable alongside (or instead of) hand-placed node positions:
 //!
 //! ```rust,no_run
-//! # use egui_xyflow::prelude::*;
-//! use egui_xyflow::physics::*;
+//! # use flowk::prelude::*;
+//! use flowk::physics::*;
 //!
 //! # let mut state: FlowState<(), ()> = FlowState::new(FlowConfig::default());
 //! let mut sim = ForceSimulation::from_state(&state)
@@ -155,7 +155,7 @@
 //! cargo run --release --example physics_bench      # physics timing harness
 //! ```
 //!
-//! See [the repo](https://github.com/avinkrisv/egui_xyflow) for the
+//! See [the repo](https://github.com/avinkrisv/flowk) for the
 //! complete list.
 //!
 //! ## Compatibility
@@ -176,6 +176,7 @@ pub mod physics;
 pub mod render;
 pub mod state;
 pub mod types;
+pub mod widgets;
 
 // ── Top-level re-exports (most commonly used items) ──────────────────────────
 
@@ -232,14 +233,14 @@ pub use edges::straight::get_straight_path;
 pub use interaction::resize::ResizeHandleKind;
 
 // Physics is a distinct optional subsystem — callers opt in explicitly via
-// `egui_xyflow::physics::*` rather than polluting the crate root / prelude.
+// `flowk::physics::*` rather than polluting the crate root / prelude.
 
 // ── Prelude ───────────────────────────────────────────────────────────────────
 
 /// Convenience glob import that brings the most commonly needed items into scope.
 ///
 /// ```rust,no_run
-/// use egui_xyflow::prelude::*;
+/// use flowk::prelude::*;
 /// ```
 pub mod prelude {
     pub use crate::config::{BackgroundVariant, FlowConfig, ZIndexMode};
@@ -251,7 +252,9 @@ pub mod prelude {
     };
     pub use crate::types::handle::{HandleType, NodeHandle};
     pub use crate::types::node::{Node, NodeExtent, NodeId};
-    pub use crate::types::position::{CoordinateExtent, Dimensions, NodeShape, Position, Transform};
+    pub use crate::types::position::{
+        CoordinateExtent, Dimensions, NodeShape, Position, Transform,
+    };
     pub use crate::types::viewport::{SelectionMode, Viewport};
 
     pub use crate::state::flow_state::FlowState;
@@ -269,5 +272,5 @@ pub mod prelude {
 
     pub use crate::interaction::resize::ResizeHandleKind;
 
-    // Physics is NOT re-exported here. Opt in with `use egui_xyflow::physics::*;`.
+    // Physics is NOT re-exported here. Opt in with `use flowk::physics::*;`.
 }

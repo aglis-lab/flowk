@@ -11,7 +11,7 @@ use super::sim_node::SimNode;
 /// # Implementing a custom force
 ///
 /// ```rust,ignore
-/// use egui_xyflow::physics::{Force, SimNode};
+/// use flowk::physics::{Force, SimNode};
 ///
 /// struct GravityWell {
 ///     center_x: f32,

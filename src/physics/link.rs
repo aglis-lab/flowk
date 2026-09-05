@@ -29,7 +29,7 @@ pub struct SimLink {
 /// # Examples
 ///
 /// ```rust,ignore
-/// use egui_xyflow::physics::LinkForce;
+/// use flowk::physics::LinkForce;
 ///
 /// // From FlowState edges (degree-based strength computed automatically)
 /// let links = LinkForce::from_state(&state).distance(50.0);

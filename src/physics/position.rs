@@ -11,7 +11,7 @@ use super::sim_node::SimNode;
 /// # Examples
 ///
 /// ```rust,ignore
-/// use egui_xyflow::physics::PositionForce;
+/// use flowk::physics::PositionForce;
 ///
 /// // Pull toward origin (D3 default)
 /// let center = PositionForce::new();

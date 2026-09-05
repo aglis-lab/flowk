@@ -13,7 +13,7 @@ use super::sim_node::SimNode;
 /// # Examples
 ///
 /// ```rust,ignore
-/// use egui_xyflow::physics::CollisionForce;
+/// use flowk::physics::CollisionForce;
 ///
 /// // Use each node's radius
 /// let collision = CollisionForce::new();

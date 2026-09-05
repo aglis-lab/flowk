@@ -14,7 +14,7 @@ use super::sim_node::SimNode;
 /// # Examples
 ///
 /// ```rust,ignore
-/// use egui_xyflow::physics::CenterForce;
+/// use flowk::physics::CenterForce;
 ///
 /// // Keep the graph centred at the origin (D3 default).
 /// let center = CenterForce::new();

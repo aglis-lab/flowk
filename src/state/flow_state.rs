@@ -451,7 +451,7 @@ impl<ND: Clone, ED: Clone> FlowState<ND, ED> {
     /// function.
     ///
     /// ```rust,ignore
-    /// use egui_xyflow::animation::easing::ease_linear;
+    /// use flowk::animation::easing::ease_linear;
     /// state.set_viewport(Viewport { x: 0.0, y: 0.0, zoom: 1.0 }, 0.5, ease_linear, current_time);
     /// ```
     pub fn set_viewport(

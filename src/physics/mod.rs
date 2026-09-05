@@ -7,8 +7,8 @@
 //! # Quick start
 //!
 //! ```rust,ignore
-//! use egui_xyflow::prelude::*;
-//! use egui_xyflow::physics::*;
+//! use flowk::prelude::*;
+//! use flowk::physics::*;
 //!
 //! let state: FlowState<MyData, ()> = /* … */;
 //!
