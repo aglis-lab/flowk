@@ -97,6 +97,3 @@ serde = ["dep:serde", "egui/serde"]
 # name = "physics_bench"
 # path = "examples/physics_bench.rs"
 
-[profile.release]
-lto = true
-codegen-units = 1

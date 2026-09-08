@@ -263,7 +263,7 @@ impl FlowConfig {
 impl Default for FlowConfig {
     fn default() -> Self {
         Self {
-            min_zoom: 0.5,
+            min_zoom: 0.25,
             max_zoom: 2.0,
             pan_on_drag: true,
             pan_on_scroll: false,
@@ -319,7 +319,7 @@ impl Default for FlowConfig {
             node_selected_border_color: egui::Color32::from_rgb(59, 130, 246),
             node_hover_border_color: egui::Color32::from_rgb(100, 170, 255),
             node_border_width: 1.0,
-            node_corner_radius: 6.0,
+            node_corner_radius: 4.0,
             node_bg_opacity: 1.0,
             node_text_color: egui::Color32::from_rgb(50, 50, 50),
             default_source_position: Position::Right,
