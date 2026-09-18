@@ -27,9 +27,7 @@ struct Point {
 enum Cell {
     Empty,
     Leaf(Vec<Point>),
-    Internal {
-        children: [Box<Cell>; 4],
-    },
+    Internal { children: [Box<Cell>; 4] },
 }
 
 /// Aggregate summary computed after insertion: per-cell bounding box, total
@@ -119,11 +117,26 @@ impl QuadTree {
 
         let mut root_cell = Cell::Empty;
         for (i, &(x, y, v)) in points.iter().enumerate() {
-            insert(&mut root_cell, Point { idx: i, x, y, value: v }, x1, y1, x2, y2);
+            insert(
+                &mut root_cell,
+                Point {
+                    idx: i,
+                    x,
+                    y,
+                    value: v,
+                },
+                x1,
+                y1,
+                x2,
+                y2,
+            );
         }
 
         let root = summarise(&root_cell, x1, y1, x2, y2);
-        Self { root, count: points.len() }
+        Self {
+            root,
+            count: points.len(),
+        }
     }
 
     /// Returns `true` if the tree contains no points.
@@ -253,7 +266,9 @@ fn summarise(cell: &Cell, x1: f32, y1: f32, x2: f32, y2: f32) -> CellSummary {
             } else {
                 // zero-value points: fall back to plain centroid
                 let n = points.len() as f32;
-                let (sx, sy) = points.iter().fold((0.0, 0.0), |(sx, sy), p| (sx + p.x, sy + p.y));
+                let (sx, sy) = points
+                    .iter()
+                    .fold((0.0, 0.0), |(sx, sy), p| (sx + p.x, sy + p.y));
                 (sx / n, sy / n)
             };
             CellSummary {
@@ -400,17 +415,11 @@ mod tests {
         ];
         let qt = QuadTree::new(&pts);
         let mut visited: Vec<usize> = Vec::new();
-        qt.visit_approx(
-            100.0,
-            100.0,
-            usize::MAX,
-            0.0,
-            |_x, _y, _v, is_leaf, idx| {
-                if is_leaf {
-                    visited.push(idx.unwrap());
-                }
-            },
-        );
+        qt.visit_approx(100.0, 100.0, usize::MAX, 0.0, |_x, _y, _v, is_leaf, idx| {
+            if is_leaf {
+                visited.push(idx.unwrap());
+            }
+        });
         visited.sort();
         assert_eq!(visited, vec![0, 1, 2, 3]);
     }
@@ -419,8 +428,9 @@ mod tests {
     fn visit_aggregates_when_theta_permits() {
         // Far away query + large theta → tree visits as few aggregates
         // rather than every leaf.
-        let pts: Vec<(f32, f32, f32)> =
-            (0..64).map(|i| ((i % 8) as f32, (i / 8) as f32, -1.0)).collect();
+        let pts: Vec<(f32, f32, f32)> = (0..64)
+            .map(|i| ((i % 8) as f32, (i / 8) as f32, -1.0))
+            .collect();
         let qt = QuadTree::new(&pts);
         let mut leaf_visits = 0;
         let mut aggregate_visits = 0;

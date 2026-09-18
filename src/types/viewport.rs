@@ -18,7 +18,11 @@ pub struct Viewport {
 
 impl Default for Viewport {
     fn default() -> Self {
-        Self { x: 0.0, y: 0.0, zoom: 1.0 }
+        Self {
+            x: 0.0,
+            y: 0.0,
+            zoom: 1.0,
+        }
     }
 }
 
@@ -30,7 +34,11 @@ impl Viewport {
 
     /// Convert to the internal [`Transform`] used by the rendering pipeline.
     pub fn to_transform(&self) -> Transform {
-        Transform { x: self.x, y: self.y, scale: self.zoom }
+        Transform {
+            x: self.x,
+            y: self.y,
+            scale: self.zoom,
+        }
     }
 }
 

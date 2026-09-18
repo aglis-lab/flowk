@@ -194,7 +194,11 @@ impl<ND: Clone, ED: Clone> FlowState<ND, ED> {
 
         for change in changes {
             match change {
-                NodeChange::Position { id, position, dragging } => {
+                NodeChange::Position {
+                    id,
+                    position,
+                    dragging,
+                } => {
                     if let Some(internal) = self.node_lookup.get_mut(id) {
                         if let Some(pos) = position {
                             internal.node.position = *pos;

@@ -59,7 +59,10 @@ pub fn apply_node_changes<D: Clone>(changes: &[NodeChange<D>], nodes: &mut Vec<N
                 // Rebuild index — removal shifts indices.
                 rebuild_node_index(&mut index, nodes);
             }
-            NodeChange::Add { node, index: insert_idx } => {
+            NodeChange::Add {
+                node,
+                index: insert_idx,
+            } => {
                 if let Some(idx) = insert_idx {
                     let idx = (*idx).min(nodes.len());
                     nodes.insert(idx, node.clone());
@@ -109,7 +112,10 @@ pub fn apply_edge_changes<D: Clone>(changes: &[EdgeChange<D>], edges: &mut Vec<E
                 edges.retain(|e| e.id != *id);
                 rebuild_edge_index(&mut index, edges);
             }
-            EdgeChange::Add { edge, index: insert_idx } => {
+            EdgeChange::Add {
+                edge,
+                index: insert_idx,
+            } => {
                 if let Some(idx) = insert_idx {
                     let idx = (*idx).min(edges.len());
                     edges.insert(idx, edge.clone());

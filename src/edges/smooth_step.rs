@@ -81,7 +81,11 @@ fn offset_point(p: egui::Pos2, position: Position, offset: f32) -> egui::Pos2 {
     }
 }
 
-fn add_rounded_corner(points: &mut SmallVec<[egui::Pos2; 8]>, corner: egui::Pos2, _border_radius: f32) {
+fn add_rounded_corner(
+    points: &mut SmallVec<[egui::Pos2; 8]>,
+    corner: egui::Pos2,
+    _border_radius: f32,
+) {
     // For simplicity, add the corner point directly.
     // The rendering step will handle smoothing with PathShape.
     points.push(corner);

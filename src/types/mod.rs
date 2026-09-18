@@ -3,10 +3,10 @@
 //! Re-exported at the crate root for convenience; most users should
 //! import via [`crate::prelude`] instead of reaching into submodules.
 
-pub mod position;
+pub mod changes;
+pub mod connection;
+pub mod edge;
 pub mod handle;
 pub mod node;
-pub mod edge;
+pub mod position;
 pub mod viewport;
-pub mod connection;
-pub mod changes;

@@ -253,10 +253,13 @@ mod tests {
     #[test]
     fn per_node_strength_overrides_default() {
         // Node 1 is "heavier" (stronger repulsion), node 0 gets pushed more.
-        let mut nodes = vec![SimNode::new(-5.0, 0.0), SimNode {
-            strength: Some(-300.0),
-            ..SimNode::new(5.0, 0.0)
-        }];
+        let mut nodes = vec![
+            SimNode::new(-5.0, 0.0),
+            SimNode {
+                strength: Some(-300.0),
+                ..SimNode::new(5.0, 0.0)
+            },
+        ];
         let mut f = ManyBodyForce::new().strength(-30.0);
         f.apply(&mut nodes, 1.0);
 

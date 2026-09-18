@@ -254,10 +254,7 @@ pub fn get_handle_absolute_position<D>(node: &InternalNode<D>, handle: &Handle) 
 
 /// Project a flow-space point onto the nearest border of `rect` and return
 /// the corresponding [`crate::types::edge::EdgeAnchor`].
-pub fn project_to_border(
-    point: egui::Pos2,
-    rect: egui::Rect,
-) -> crate::types::edge::EdgeAnchor {
+pub fn project_to_border(point: egui::Pos2, rect: egui::Rect) -> crate::types::edge::EdgeAnchor {
     use crate::types::edge::EdgeAnchor;
 
     // Compute closest point on each side and its distance

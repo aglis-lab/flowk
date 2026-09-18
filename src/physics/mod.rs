@@ -321,10 +321,7 @@ impl ForceSimulation {
     /// mutated (add/remove) since the simulation was constructed. In that
     /// case the caller should rebuild the simulation via
     /// [`from_state`](Self::from_state) before continuing.
-    pub fn sync_from_state<ND: Clone, ED: Clone>(
-        &mut self,
-        state: &FlowState<ND, ED>,
-    ) -> bool {
+    pub fn sync_from_state<ND: Clone, ED: Clone>(&mut self, state: &FlowState<ND, ED>) -> bool {
         if !self.ids_match(state) {
             return false;
         }
@@ -357,10 +354,7 @@ impl ForceSimulation {
     /// Push simulation positions back into the `FlowState` and rebuild the
     /// internal lookup cache. Returns `false` on id mismatch (see
     /// [`sync_from_state`](Self::sync_from_state)).
-    pub fn sync_to_state<ND: Clone, ED: Clone>(
-        &self,
-        state: &mut FlowState<ND, ED>,
-    ) -> bool {
+    pub fn sync_to_state<ND: Clone, ED: Clone>(&self, state: &mut FlowState<ND, ED>) -> bool {
         if !self.ids_match(state) {
             return false;
         }
@@ -405,7 +399,8 @@ impl ForceSimulation {
                 if sid != &flow_node.id {
                     log::warn!(
                         "ForceSimulation id drift: sim={} flow={} — rebuild",
-                        sid, flow_node.id
+                        sid,
+                        flow_node.id
                     );
                     return false;
                 }

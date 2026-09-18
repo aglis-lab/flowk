@@ -55,7 +55,11 @@ impl Position {
                 let dx = to_center.x - from_center.x;
                 let dy = to_center.y - from_center.y;
                 if dx.abs() > dy.abs() {
-                    if dx > 0.0 { Position::Right } else { Position::Left }
+                    if dx > 0.0 {
+                        Position::Right
+                    } else {
+                        Position::Left
+                    }
                 } else if dy > 0.0 {
                     Position::Bottom
                 } else {

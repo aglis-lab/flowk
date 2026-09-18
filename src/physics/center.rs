@@ -30,7 +30,11 @@ pub struct CenterForce {
 
 impl Default for CenterForce {
     fn default() -> Self {
-        Self { target_x: 0.0, target_y: 0.0, strength: 1.0 }
+        Self {
+            target_x: 0.0,
+            target_y: 0.0,
+            strength: 1.0,
+        }
     }
 }
 

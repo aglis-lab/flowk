@@ -38,7 +38,10 @@ pub(crate) fn render_background(
             let mut x = canvas_rect.min.x + offset_x;
             while x < canvas_rect.max.x {
                 painter.line_segment(
-                    [egui::pos2(x, canvas_rect.min.y), egui::pos2(x, canvas_rect.max.y)],
+                    [
+                        egui::pos2(x, canvas_rect.min.y),
+                        egui::pos2(x, canvas_rect.max.y),
+                    ],
                     stroke,
                 );
                 x += gap;
@@ -46,7 +49,10 @@ pub(crate) fn render_background(
             let mut y = canvas_rect.min.y + offset_y;
             while y < canvas_rect.max.y {
                 painter.line_segment(
-                    [egui::pos2(canvas_rect.min.x, y), egui::pos2(canvas_rect.max.x, y)],
+                    [
+                        egui::pos2(canvas_rect.min.x, y),
+                        egui::pos2(canvas_rect.max.x, y),
+                    ],
                     stroke,
                 );
                 y += gap;
@@ -59,14 +65,8 @@ pub(crate) fn render_background(
             while x < canvas_rect.max.x {
                 let mut y = canvas_rect.min.y + offset_y;
                 while y < canvas_rect.max.y {
-                    painter.line_segment(
-                        [egui::pos2(x - arm, y), egui::pos2(x + arm, y)],
-                        stroke,
-                    );
-                    painter.line_segment(
-                        [egui::pos2(x, y - arm), egui::pos2(x, y + arm)],
-                        stroke,
-                    );
+                    painter.line_segment([egui::pos2(x - arm, y), egui::pos2(x + arm, y)], stroke);
+                    painter.line_segment([egui::pos2(x, y - arm), egui::pos2(x, y + arm)], stroke);
                     y += gap;
                 }
                 x += gap;

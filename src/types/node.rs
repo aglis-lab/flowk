@@ -338,18 +338,32 @@ pub struct InternalNode<D = ()> {
 impl<D> InternalNode<D> {
     /// Return the bounding rectangle in flow space.
     pub fn rect(&self) -> egui::Rect {
-        let w = self.node.width.or(self.node.measured.map(|d| d.width)).unwrap_or(150.0);
-        let h = self.node.height.or(self.node.measured.map(|d| d.height)).unwrap_or(40.0);
+        let w = self
+            .node
+            .width
+            .or(self.node.measured.map(|d| d.width))
+            .unwrap_or(150.0);
+        let h = self
+            .node
+            .height
+            .or(self.node.measured.map(|d| d.height))
+            .unwrap_or(40.0);
         egui::Rect::from_min_size(self.internals.position_absolute, egui::vec2(w, h))
     }
 
     /// Return the effective width (explicit or measured or default).
     pub fn width(&self) -> f32 {
-        self.node.width.or(self.node.measured.map(|d| d.width)).unwrap_or(150.0)
+        self.node
+            .width
+            .or(self.node.measured.map(|d| d.width))
+            .unwrap_or(150.0)
     }
 
     /// Return the effective height (explicit or measured or default).
     pub fn height(&self) -> f32 {
-        self.node.height.or(self.node.measured.map(|d| d.height)).unwrap_or(40.0)
+        self.node
+            .height
+            .or(self.node.measured.map(|d| d.height))
+            .unwrap_or(40.0)
     }
 }

@@ -1,3 +1,4 @@
+//! Orthogonal edge paths with right-angle bends.
 use egui::{Pos2, pos2};
 use smallvec::{SmallVec, smallvec};
 
@@ -7,6 +8,12 @@ use crate::{EdgePathResult, EdgePosition, Position};
 /// bend. Keeps the connector from turning immediately at the node's edge.
 const STUB: f32 = 80.0;
 
+/// Build an orthogonal path between two edge endpoints.
+///
+/// The path leaves each endpoint in the direction of its [`Position`], then
+/// connects the endpoints with one or more horizontal or vertical segments.
+/// `curvature` is accepted for compatibility with other path builders but is
+/// currently unused because elbow corners remain square.
 pub fn get_elbow_path(pos: &EdgePosition, _curvature: Option<f32>) -> EdgePathResult {
     let source = pos2(pos.source_x, pos.source_y);
     let target = pos2(pos.target_x, pos.target_y);

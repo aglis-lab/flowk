@@ -176,6 +176,7 @@ pub mod physics;
 pub mod render;
 pub mod state;
 pub mod types;
+pub mod widgets;
 
 // ── Top-level re-exports (most commonly used items) ──────────────────────────
 
